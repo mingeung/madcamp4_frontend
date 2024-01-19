@@ -46,6 +46,8 @@ dependencies {
     implementation("com.google.android.material:material:1.4.0")
     //websocket
     implementation ("org.java-websocket:Java-WebSocket:1.5.1")
+    implementation ("io.socket:socket.io-client:2.0.1")
+
 
 
 }

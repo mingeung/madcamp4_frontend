@@ -1,62 +1,69 @@
 package com.example.madcamp4_frontend;
-
-import android.os.AsyncTask;
-import androidx.appcompat.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
-import org.java_websocket.client.WebSocketClient;
-import org.java_websocket.drafts.Draft;
-import org.java_websocket.drafts.Draft_6455;
-import org.java_websocket.handshake.ServerHandshake;
-import java.net.URI;
+import android.widget.Toast;
+import androidx.appcompat.app.AppCompatActivity;
 import java.net.URISyntaxException;
+import io.socket.client.IO;
+import io.socket.client.Socket;
+import io.socket.emitter.Emitter;
+import android.os.AsyncTask;
 
 public class MainActivity extends AppCompatActivity {
-
-    private WebSocketClient mWebSocketClient;
-
+    private Socket mSocket;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Connect to WebSocket server
-        connectWebSocket();
+        // Connect to Socket.IO server
+        new ConnectSocketIOAsyncTask().execute();
+    }
+    private class ConnectSocketIOAsyncTask extends AsyncTask<Void, Void, Void> {
+        @Override
+        protected Void doInBackground(Void... params) {
+            connectSocketIO();
+            return null;
+        }
     }
 
-    private void connectWebSocket() {
-        URI uri;
+    private void connectSocketIO() {
         try {
-            uri = new URI("ws://172.10.7.13:80");
+            mSocket = IO.socket("http://172.10.7.13:80"); // Socket.IO 서버 주소로 변경
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
         }
 
-        Draft[] drafts = {new Draft_6455()};
-        mWebSocketClient = new WebSocketClient(uri, drafts[0]) {
-            @Override
-            public void onOpen(ServerHandshake serverHandshake) {
-                Log.d("WebSocket", "Connection opened");
-                mWebSocketClient.send("Hello, Server!"); // Sending a message
-            }
+        mSocket.on(Socket.EVENT_CONNECT, args -> {
+            Log.d("Socket.IO", "Connected");
+            mSocket.emit("message", "Hello, Server!"); // Sending a message
+        });
 
-            @Override
-            public void onMessage(String message) {
-                Log.d("WebSocket", "Received message: " + message);
-            }
+        mSocket.on("message", args -> {
+            String message = (String) args[0];
+            Log.d("Socket.IO", "Received message: " + message);
 
-            @Override
-            public void onClose(int i, String s, boolean b) {
-                Log.d("WebSocket", "Connection closed");
-            }
+            runOnUiThread(() -> showToast("Received message: " + message));
+        });
 
-            @Override
-            public void onError(Exception e) {
-                Log.e("WebSocket", "Error occurred: " + e.getMessage());
-                e.printStackTrace();
-            }
-        };
-        mWebSocketClient.connect();
+        mSocket.on(Socket.EVENT_DISCONNECT, args -> {
+            Log.d("Socket.IO", "Disconnected");
+        });
+
+        mSocket.connect();
+    }
+
+    private void showToast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        if (mSocket != null) {
+            mSocket.disconnect();
+            mSocket.off();
+        }
     }
 }
