@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- res/navigation/nav_graph.xml -->
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/nav_graph"
+    app:startDestination="@id/mapFragment">
+
+    <fragment
+        android:id="@+id/mapFragment"
+        android:name="com.example.madcamp4.frontend.MapFragment"
+        android:label="Map"
+        tools:layout="@layout/fragment_map" />
+
+    <fragment
+        android:id="@+id/chattingFragment"
+        android:name="com.example.madcamp4.frontend.ChattingFragment"
+        android:label="Chatting"
+        tools:layout="@layout/fragment_chatting" />
+
+    <fragment
+        android:id="@+id/mypageFragment"
+        android:name="com.example.madcamp4.frontend.MypageFragment"
+        android:label="My Page"
+        tools:layout="@layout/fragment_mypage" />
+</navigation>
