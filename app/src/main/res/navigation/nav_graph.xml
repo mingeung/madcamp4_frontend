@@ -8,19 +8,19 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.madcamp4.frontend.MapFragment"
+        android:name="com.example.madcamp4_frontend.MapFragment"
         android:label="Map"
         tools:layout="@layout/fragment_map" />
 
     <fragment
         android:id="@+id/chattingFragment"
-        android:name="com.example.madcamp4.frontend.ChattingFragment"
+        android:name="com.example.madcamp4_frontend.ChattingFragment"
         android:label="Chatting"
         tools:layout="@layout/fragment_chatting" />
 
     <fragment
         android:id="@+id/mypageFragment"
-        android:name="com.example.madcamp4.frontend.MypageFragment"
+        android:name="com.example.madcamp4_frontend.MypageFragment"
         android:label="My Page"
         tools:layout="@layout/fragment_mypage" />
 </navigation>
