@@ -8,9 +8,9 @@
 
     <fragment
         android:id="@+id/mapFragment"
-        android:name="com.example.madcamp4_frontend.MapFragment"
+        android:name="com.example.madcamp4_frontend.MapsFragment"
         android:label="Map"
-        tools:layout="@layout/fragment_map" />
+        tools:layout="@layout/fragment_maps" />
 
     <fragment
         android:id="@+id/chattingFragment"

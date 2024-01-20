@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">madcamp4_frontend</string>
+    <string name="map_error_message">Error in map</string>
 </resources>

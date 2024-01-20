@@ -1,8 +1,13 @@
 package com.example.madcamp4_frontend;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.Button;
 import android.widget.Toast;
 import androidx.appcompat.app.AppCompatActivity;
+
+import java.net.URI;
 import java.net.URISyntaxException;
 import io.socket.client.IO;
 import io.socket.client.Socket;
@@ -29,7 +34,8 @@ public class MainActivity extends AppCompatActivity {
 
     private void connectSocketIO() {
         try {
-            mSocket = IO.socket("http://172.10.7.13:80"); // Socket.IO 서버 주소로 변경
+            URI uri = new URI("http://172.10.7.13:80");
+            mSocket = IO.socket(uri);
         } catch (URISyntaxException e) {
             e.printStackTrace();
             return;
