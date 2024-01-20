@@ -1,10 +1,13 @@
 package com.example.madcamp4_frontend;
 
 import android.os.Bundle;
+
 import androidx.fragment.app.Fragment;
+
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -32,11 +35,23 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
     public void onMapReady(GoogleMap googleMap) {
         mMap = googleMap;
 
-        // Add a marker in Sydney and move the camera
-        LatLng sydney = new LatLng(-34, 151);
+
+        LatLng seoul = new LatLng(37.5665, 126.9780);
         mMap.addMarker(new MarkerOptions()
-                .position(sydney)
-                .title("Marker in Sydney"));
-        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
+                .position(seoul)
+                .title("서울 마커"));
+        mMap.moveCamera(CameraUpdateFactory.newLatLng(seoul));
+        ((MainActivity) requireActivity()).setLocationUpdateListener(new MainActivity.LocationUpdateListener() {
+            @Override
+            public void onLocationUpdate(double latitude, double longitude) {
+                LatLng userLocation = new LatLng(latitude, longitude);
+                mMap.clear();  // 기존 마커 제거
+                mMap.addMarker(new MarkerOptions()
+                        .position(userLocation)
+                        .title("사용자 위치"));
+                mMap.moveCamera(CameraUpdateFactory.newLatLng(userLocation));
+            }
+        });
+
     }
 }

@@ -23,8 +23,12 @@ import android.os.AsyncTask;
 
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MainActivity extends AppCompatActivity {
     private Socket mSocket;
+    private LocationUpdateListener locationUpdateListener;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,8 +61,18 @@ public class MainActivity extends AppCompatActivity {
                 .replace(R.id.fragment_container, new MapsFragment())
                 .commit();
 
-
+        new ConnectSocketIOAsyncTask().execute();
     }
+
+    // 내부 인터페이스로 LocationUpdateListener 선언
+    public interface LocationUpdateListener {
+        void onLocationUpdate(double latitude, double longitude);
+    }
+
+    public void setLocationUpdateListener(LocationUpdateListener listener) {
+        this.locationUpdateListener = listener;
+    }
+
     private class ConnectSocketIOAsyncTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
@@ -81,6 +95,20 @@ public class MainActivity extends AppCompatActivity {
             mSocket.emit("message", "Hello, Server!"); // Sending a message
         });
 
+        mSocket.on("locationUpdate", args -> {
+            JSONObject data = (JSONObject) args[0];
+            try {
+                double latitude = data.getDouble("latitude");
+                double longitude = data.getDouble("longitude");
+
+                if (locationUpdateListener != null) {
+                    runOnUiThread(() -> locationUpdateListener.onLocationUpdate(latitude, longitude));
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        });
+
         mSocket.on("message", args -> {
             String message = (String) args[0];
             Log.d("Socket.IO", "Received message: " + message);
@@ -91,6 +119,8 @@ public class MainActivity extends AppCompatActivity {
         mSocket.on(Socket.EVENT_DISCONNECT, args -> {
             Log.d("Socket.IO", "Disconnected");
         });
+
+
 
         mSocket.connect();
     }
