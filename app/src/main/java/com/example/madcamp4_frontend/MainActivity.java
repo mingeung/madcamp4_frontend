@@ -76,7 +76,9 @@ public class MainActivity extends AppCompatActivity {
     private class ConnectSocketIOAsyncTask extends AsyncTask<Void, Void, Void> {
         @Override
         protected Void doInBackground(Void... params) {
+            Log.d("ConnectSocketIOAsyncTask", "Connecting to Socket.IO server...");
             connectSocketIO();
+            Log.d("ConnectSocketIOAsyncTask", "Socket.IO connection established.");
             return null;
         }
     }
@@ -96,16 +98,22 @@ public class MainActivity extends AppCompatActivity {
         });
 
         mSocket.on("locationUpdate", args -> {
+            Log.d("Socket.IO", "사용자 위치 불러오기 시도"); //여기를 try조차 하고 있지 않다.
             JSONObject data = (JSONObject) args[0];
             try {
+
                 double latitude = data.getDouble("latitude");
                 double longitude = data.getDouble("longitude");
 
                 if (locationUpdateListener != null) {
-                    runOnUiThread(() -> locationUpdateListener.onLocationUpdate(latitude, longitude));
+                    runOnUiThread(() -> {
+                        locationUpdateListener.onLocationUpdate(latitude, longitude);
+                        Log.d("Socket.IO", "위치 소켓 LocationUpdateListener called - Latitude: " + latitude + ", Longitude: " + longitude);
+                    });
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
+                Log.e("Socket.IO", "위치 소켓 Error parsing locationUpdate data: " + e.getMessage());
             }
         });
 
