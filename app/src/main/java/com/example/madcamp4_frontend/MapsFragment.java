@@ -21,7 +21,7 @@ public class MapsFragment extends Fragment implements OnMapReadyCallback {
         View view = inflater.inflate(R.layout.fragment_maps, container, false);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.map);
+        SupportMapFragment mapFragment = (SupportMapFragment) getChildFragmentManager().findFragmentById(R.id.maps);
 
         mapFragment.getMapAsync(this);
 

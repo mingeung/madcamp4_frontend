@@ -2,10 +2,14 @@ package com.example.madcamp4_frontend;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.Fragment;
 import androidx.navigation.NavController;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.navigation.ui.NavigationUI;
@@ -26,14 +30,34 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_nav_view);
-        NavHostFragment navHostFragment = (NavHostFragment) getSupportFragmentManager().findFragmentById(R.id.nav_host_fragment);
-        NavController navController = navHostFragment.getNavController();
+        BottomNavigationView bottomNavigationView = findViewById(R.id.bottom_navigation);
+        bottomNavigationView.setOnNavigationItemSelectedListener(item -> {
+            Fragment selectedFragment = null;
 
-        NavigationUI.setupWithNavController(bottomNavigationView, navController);
+            int itemId = item.getItemId();
 
-        // Connect to Socket.IO server
-        new ConnectSocketIOAsyncTask().execute();
+            if (itemId == R.id.navigation_maps) {
+                selectedFragment = new MapsFragment();
+            } else if (itemId == R.id.navigation_chat) {
+                selectedFragment = new ChattingFragment();
+            } else if (itemId == R.id.navigation_mypage) {
+                selectedFragment = new MypageFragment();
+            }
+
+            if (selectedFragment != null) {
+                getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, selectedFragment)
+                        .commit();
+            }
+
+            return true;
+        });
+        // Set the default fragment
+        getSupportFragmentManager().beginTransaction()
+                .replace(R.id.fragment_container, new MapsFragment())
+                .commit();
+
+
     }
     private class ConnectSocketIOAsyncTask extends AsyncTask<Void, Void, Void> {
         @Override
